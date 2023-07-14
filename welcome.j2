@@ -1,0 +1,3 @@
+{% for item in groups.all %}
+{{ hostvars[item].ansible_net_image }} {{ hostvars[item].ansible_net_hostname }} {{ item }}
+{% endfor %}

@@ -1,0 +1,36 @@
+---
+- name: configure acls
+  hosts: asa
+  connection: network_cli
+  gather_facts: yes
+  become: yes
+  become_method: enable
+  tasks:
+    - name: Create an Object named Cloud_subnet 
+      cisco.asa.asa_config:
+        lines: 
+        - object-group network Cloud_subnet
+        - network-object host 20.20.30.18
+        - network-object host 20.20.30.19
+        - network-object host 20.20.30.20        
+      register: object1
+    - name: Add local subnets to Local_subnet
+      cisco.asa.asa_config:
+        lines:
+        - network-object host 10.20.30.18
+        - network-object host 10.20.30.19
+        - network-object host 10.20.30.20 
+        parents: [object-group network Local_subnet]
+      register: object2
+      
+    - name: save running to startup when modified
+      cisco.asa.asa_config:
+        save_when: modified
+
+    - name: Show changes to interface from task above
+      ansible.builtin.debug:
+        var: object1
+    - name: Show changes to interface from task above
+      ansible.builtin.debug:
+        var: object2
+

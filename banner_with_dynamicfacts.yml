@@ -1,0 +1,26 @@
+---
+- name: configure acls
+  hosts: asa
+  connection: network_cli
+  gather_facts: yes
+  become: yes
+  become_method: enable
+  tasks:
+    - name: Gather legacy and resource facts
+      cisco.asa.asa_config:
+        lines:
+          - no banner login
+          - banner login                         THIS DEVICE IS MONITORED !!!
+          - banner login This system is for use by authorized users only. Any individual using this system.
+          - banner login Device Hostname {{ ansible_facts.net_hostname }}
+          - banner login Device serial No {{ ansible_facts.net_serialnum }}
+          - banner login Device IOS Version {{ ansible_facts.net_version }}
+          - banner login Firewall Model {{ ansible_facts.net_asatype }}
+          - banner login Firewall Version {{ ansible_facts.net_device_mgr_version }}
+          - banner login Firepower Chasis version {{ ansible_facts.net_firepower_version }}
+
+    - name: save running to startup when modified
+      cisco.asa.asa_config:
+        save_when: modified
+
+
