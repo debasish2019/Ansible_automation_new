@@ -1,0 +1,44 @@
+---
+- name: configure acls
+  hosts: asa
+  connection: network_cli
+  gather_facts: no
+  become: yes
+  become_method: enable
+  tasks:
+    - name: Merge module attributes of given object-group
+      cisco.asa.asa_ogs:
+        config:
+        - object_type: network
+          object_groups:
+            - name: group_network_obj
+              group_object:
+                - test_og_network
+            - name: test_og_network
+              description: test_og_network
+              network_object:
+                host:
+                  - 192.0.2.1
+                  - 192.0.2.2
+                address:
+                  - 192.0.2.0 255.255.255.0
+                  - 198.51.100.0 255.255.255.0
+            - name: test_network_og
+              description: test_network_og
+              network_object:
+                host:
+                  - 192.0.3.1
+                  - 192.0.3.2
+                ipv6_address:
+                  - 2001:db8:3::/64
+
+        state: merged
+      register: object
+ #   - name: save running to startup when modified
+  #    cisco.asa.asa_config:
+   #     save_when: modified
+
+    - name: Show changes to interface from task above
+      ansible.builtin.debug:
+        var: object
+

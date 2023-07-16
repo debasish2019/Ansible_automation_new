@@ -1,0 +1,12 @@
+---
+- name: configure acls
+  hosts: asa
+  connection: network_cli
+  gather_facts: yes
+  become: yes
+  become_method: enable
+  tasks:
+    - name: Parse the commands for provided configuration
+      cisco.asa.asa_acls:
+        running_config: "access-list temp_access line 1 extended deny tcp 192.0.2.0 255.255.255.0 192.0.3.0 255.255.255.0 eq www log informational"
+        state: parsed

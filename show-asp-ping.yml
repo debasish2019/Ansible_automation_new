@@ -1,0 +1,41 @@
+---
+- name: configure acls
+  hosts: asa
+  connection: network_cli
+  gather_facts: yes
+  become: yes
+  become_method: enable
+  tasks:
+    - name: Show the ASA version
+      cisco.asa.asa_command:
+        commands:
+        - show version
+      register: version
+    - name: Show ASA drops and memory
+      cisco.asa.asa_command:
+        commands:
+        - show asp drop
+        - show memory
+      register: aspmemory
+
+    - name: Send repeat pings and wait for the result to pass 100%
+      cisco.asa.asa_command:
+        commands:
+        - ping 172.15.15.6 repeat 20 size 350
+        wait_for:
+        - result[0] contains 100
+        retries: 2  
+      register: pingreply
+    
+    - name: Show changes to interface from task above
+      ansible.builtin.debug:
+        var: version
+    - name: Show changes to interface from task above
+      ansible.builtin.debug:
+        var: aspmemory
+    - name: Show changes to interface from task above
+      ansible.builtin.debug:
+        var: pingreply
+
+
+        

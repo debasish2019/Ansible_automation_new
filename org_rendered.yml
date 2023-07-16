@@ -1,0 +1,59 @@
+---
+- name: configure acls
+  hosts: asa
+  connection: network_cli
+  gather_facts: yes
+  become: yes
+  become_method: enable
+  tasks:
+    - name: Gather listed OGs with provided configurations
+      cisco.asa.asa_ogs:
+        config:
+        state: gathered
+      register: ogs
+    - name: Show changes to interface from task above
+      ansible.builtin.debug:
+        var: ogs
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
